@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "13800686432",
+    "firebase_url": "https://mmexamresult.firebaseio.com",
+    "project_id": "mmexamresult",
+    "storage_bucket": "mmexamresult.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13800686432:android:177712417e86635b",
+        "android_client_info": {
+          "package_name": "com.mgngoelay.examresult"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "13800686432-mbgk51purvi6mpdb0951u9812cg4babq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwosYoX5PU8J0cvTJulb88X62_XuL9zhI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
