@@ -2,14 +2,14 @@ package com.mgngoelay.examresult;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -20,29 +20,34 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 
 public class MainActivity extends AppCompatActivity {
     WebView webView;
     CheckInternet checkInternet;
     SwipeRefreshLayout swipe;
-    String ok = null;
+    public static String ok = null;
     Typeface typeface;
     String message="";
     AdRequest adRequest;
     AdView adView;
     InterstitialAd interstitialAd;
+    LinearLayout adLayout;
 
     FloatingActionMenu fmenu;
     FloatingActionButton share,exit,about,refresh;
     String download_link = null;
+    String mainSite = "https://mmrexamresult.blogspot.com/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,10 +55,16 @@ public class MainActivity extends AppCompatActivity {
 
         fmenu = findViewById(R.id.fmenu);
 
-        adRequest = new AdRequest.Builder().build();
+        MobileAds.initialize(this);
+
+        adRequest = new AdRequest.Builder().addTestDevice("406972EB0F471C6C9C2464D27FFFC579").build();
 
         //Banner
-        adView = findViewById(R.id.adView);
+        adLayout = findViewById(R.id.adView);
+        adView = new AdView(this);
+        adLayout.addView(adView);
+        adView.setAdSize(AdSize.SMART_BANNER);
+        adView.setAdUnitId(Constants.getBanner());
         adView.setAdListener(new AdListener(){
             @Override
             public void onAdFailedToLoad(int i) {
@@ -72,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Interstitial
         interstitialAd = new InterstitialAd(this);
-        interstitialAd.setAdUnitId("ca-app-pub-2780984156359274/8681059082");
+        interstitialAd.setAdUnitId(Constants.getInterstitial());
         interstitialAd.setAdListener(new AdListener(){
             @Override
             public void onAdClosed() {
@@ -103,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
                 }else {
                     webView.setVisibility(View.VISIBLE);
                 }
-
                 if (url.startsWith("https://drive.google.com/viewerng/viewer?url=") || url.startsWith("https://drive.google.com/viewerng/viewer?embedded=true&url=")){
                     swipe.setEnabled(false);
                 }else {
@@ -116,8 +126,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
-                noInternet();
-                webView.setVisibility(View.GONE);
             }
 
             @Override
@@ -160,15 +168,16 @@ public class MainActivity extends AppCompatActivity {
                         .setNegativeButton("ဖွင့်မည်", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                if (checkInternet()){
+                                    swipe.setRefreshing(false);
+                                    String readURL = "https://drive.google.com/viewerng/viewer?url="+download_link;
+//                                    webView.loadUrl(readURL);
+                                    startActivityForResult(new Intent(MainActivity.this,ViewerActivity.class).putExtra("url",readURL),101);
+                                }
+                                swipe.setEnabled(false);
                                 if (interstitialAd.isLoaded()){
                                     interstitialAd.show();
                                 }else interstitialAd.loadAd(adRequest);
-
-                                if (checkInternet()){
-                                    swipe.setRefreshing(false);
-                                    webView.loadUrl("https://drive.google.com/viewerng/viewer?embedded=true&url="+download_link);
-                                }
-                                swipe.setEnabled(false);
                             }
                         })
                         .setNeutralButton("ဘာမှမလုပ်ပါ", new DialogInterface.OnClickListener() {
@@ -205,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         addMenu();
 
         if (checkInternet()) {
-            webView.loadUrl("https://mmrexamresult.blogspot.com/");
+            webView.loadUrl(mainSite);
             swipe.setRefreshing(true);
         }
     }
@@ -342,6 +351,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==101){
+            if (interstitialAd.isLoaded()){
+                interstitialAd.show();
+            }else interstitialAd.loadAd(adRequest);
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         if (webView.canGoBack()){
             webView.goBack();
@@ -406,9 +425,6 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("ထွက်မည်", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (interstitialAd.isLoaded()){
-                            interstitialAd.show();
-                        }else interstitialAd.loadAd(adRequest);
                         finish();
                     }
                 })
@@ -442,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
                         "ပညာရေးဝန်ကြီးဌာနမှ\n" +
                         "တရားဝင်ထုတ်ထားခြင်းမဟုတ်ပါ။\n" +
                         "မူရင်း Website ကို\nApplication တစ်ခုအနေနဲ့\n" +
-                        "အသုံးပြုနိုင်အောင် ဖန်တီးထားခြင်းသာဖြစ်ပါတယ်။",typeface,Color.BLACK))
+                        "အသုံးပြုနိုင်အောင်\nဖန်တီးထားခြင်းသာဖြစ်ပါသည်။",typeface,Color.BLACK))
                 .setPositiveButton("ဟုတ်ပြီ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

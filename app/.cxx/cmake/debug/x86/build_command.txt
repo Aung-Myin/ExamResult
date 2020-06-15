@@ -1,0 +1,20 @@
+Executable : /Users/htetznaing/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake
+arguments : 
+-H/Users/htetznaing/Documents/AndroidStudioProjects/ExamResult/app
+-DCMAKE_BUILD_TYPE=Debug
+-DCMAKE_TOOLCHAIN_FILE=/Users/htetznaing/Library/Android/sdk/ndk-bundle/build/cmake/android.toolchain.cmake
+-DANDROID_ABI=x86
+-DANDROID_NDK=/Users/htetznaing/Library/Android/sdk/ndk-bundle
+-DANDROID_PLATFORM=android-17
+-DCMAKE_ANDROID_ARCH_ABI=x86
+-DCMAKE_ANDROID_NDK=/Users/htetznaing/Library/Android/sdk/ndk-bundle
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/htetznaing/Documents/AndroidStudioProjects/ExamResult/app/build/intermediates/cmake/debug/obj/x86
+-DCMAKE_MAKE_PROGRAM=/Users/htetznaing/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_SYSTEM_VERSION=17
+-B/Users/htetznaing/Documents/AndroidStudioProjects/ExamResult/app/.cxx/cmake/debug/x86
+-GNinja
+jvmArgs : 
+
+Build command args:
