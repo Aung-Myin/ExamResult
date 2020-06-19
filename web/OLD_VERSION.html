@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Myanmar Exam Result</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href='https://mmwebfonts.comquas.com/fonts/?font=pyidaungsu' />
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #008000;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .navbar a:hover {
+            background: #ddd;
+            color: black;
+        }
+
+        .main {
+            padding: 16px;
+            margin-top: 50px;
+            /* height: 1500px; Used in this example to enable scrolling */
+        }
+
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        .clickable-row {
+            font-family: Pyidaungsu;
+            color: #007bff;
+        }
+
+        tr {
+            cursor: pointer;
+            cursor: hand;
+            border: 1px solid #dddddd;
+            border-collapse: collapse;
+        }
+
+        .badge-primary {
+            color: #fff;
+            background-color: #007bff;
+        }
+
+        .badge-pill {
+            border-radius: 10rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .30em .5em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a onclick="return changeYear('2016')" href="#2016">2016</a>
+        <a onclick="return changeYear('2017')" href="#2017">2017</a>
+        <a onclick="return changeYear('2018')" href="#2018">2018</a>
+        <a onclick="return changeYear('2019')" href="#2019">2019</a>
+    </div>
+
+    <div class="main">
+        <table>
+            <tbody id="main">
+                <!-- <tr class='clickable-row'
+                onclick="window.location='https://mmoe2016.s3-ap-southeast-1.amazonaws.com/pdf/yangon/YG-05.pdf';">
+                <td>၁။</td>
+                <td>မြောက်ဥက္ကလာပ</td>
+                <td width="20px">
+                    <span class="badge badge-primary badge-pill">2019</span>
+                </td>
+            </tr>
+            <tr class='clickable-row'
+                onclick="window.location='https://mmoe2016.s3-ap-southeast-1.amazonaws.com/pdf/yangon/YG-05.pdf';">
+                <td>၂။</td>
+                <td>ရန်ကင်း</td>
+                <td width="20px"><span class="badge badge-primary badge-pill">2019</span></td>
+            </tr> -->
+            </tbody>
+        </table>
+
+        <script type="text/javascript">
+            var color_index = 0;
+            var exam_2016 = [{ "name": "ရန်ကုန်တိုင်းဒေသကြီး + နိုင်ငံခြား", "url": "https://2016.myanmarexam.org/yangon.html" }, { "name": "မန္တလေးတိုင်းဒေသကြီး", "url": "https://2016.myanmarexam.org/mandalay.html" }, { "name": "နေပြည်တော်", "url": "https://2016.myanmarexam.org/naypyitaw.html" }, { "name": "ဧရာဝတီတိုင်းဒေသကြီး", "url": "https://2016.myanmarexam.org/ayeyarwaddy.html" }, { "name": "စစ်ကိုင်းတိုင်းဒေသကြီး", "url": "https://2016.myanmarexam.org/sagaing.html" }, { "name": "မကွေးတိုင်းဒေသကြီး", "url": "https://2016.myanmarexam.org/magway.html" }, { "name": "ပဲခူးတိုင်းဒေသကြီး", "url": "https://2016.myanmarexam.org/bago.html" }, { "name": "တနင်္သာရီတိုင်းဒေသကြီး", "url": "https://2016.myanmarexam.org/tanintharyi.html" }, { "name": "ကချင်ပြည်နယ်", "url": "https://2016.myanmarexam.org/kachin.html" }, { "name": "ကယားပြည်နယ်", "url": "https://2016.myanmarexam.org/kayah.html" }, { "name": "ကရင်ပြည်နယ်", "url": "https://2016.myanmarexam.org/kayin.html" }, { "name": "ချင်းပြည်နယ်", "url": "https://2016.myanmarexam.org/chin.html" }, { "name": "မွန်ပြည်နယ်", "url": "https://2016.myanmarexam.org/mon.html" }, { "name": "ရခိုင်ပြည်နယ်", "url": "https://2016.myanmarexam.org/yakhine.html" }, { "name": "ရှမ်းပြည်နယ်", "url": "https://2016.myanmarexam.org/shan.html" }],
+                exam_2017 = [{ "name": "ရန်ကုန်တိုင်းဒေသကြီး", "url": "https://2017.myanmarexam.org/ygn.html" }, { "name": "မန္တလေးတိုင်းဒေသကြီး", "url": "https://2017.myanmarexam.org/mdy.html" }, { "name": "နေပြည်တော်", "url": "https://2017.myanmarexam.org/npw.html" }, { "name": "ဧရာဝတီတိုင်းဒေသကြီး", "url": "https://2017.myanmarexam.org/ayy.html" }, { "name": "စစ်ကိုင်းတိုင်းဒေသကြီး", "url": "https://2017.myanmarexam.org/sgg.html" }, { "name": "မကွေးတိုင်းဒေသကြီး", "url": "https://2017.myanmarexam.org/mgy.html" }, { "name": "ပဲခူးတိုင်းဒေသကြီး", "url": "https://2017.myanmarexam.org/bgo.html" }, { "name": "တနင်္သာရီတိုင်းဒေသကြီး", "url": "https://2017.myanmarexam.org/tni.html" }, { "name": "ကချင်ပြည်နယ်", "url": "https://2017.myanmarexam.org/kcn.html" }, { "name": "ကယားပြည်နယ်", "url": "https://2017.myanmarexam.org/kyh.html" }, { "name": "ကရင်ပြည်နယ်", "url": "https://2017.myanmarexam.org/kyn.html" }, { "name": "ချင်းပြည်နယ်", "url": "https://2017.myanmarexam.org/chn.html" }, { "name": "မွန်ပြည်နယ်", "url": "https://2017.myanmarexam.org/mon.html" }, { "name": "ရခိုင်ပြည်နယ်", "url": "https://2017.myanmarexam.org/rke.html" }, { "name": "ရှမ်းပြည်နယ်", "url": "https://2017.myanmarexam.org/shn.html" }, { "name": "နိုင်ငံခြား", "url": "https://dmey17.s3-ap-southeast-1.amazonaws.com/pdf/fgn/FGN-01.pdf" }],
+                exam_2018 = [{ "name": "ရန်ကုန်တိုင်းဒေသကြီး", "url": "https://2018.myanmarexam.org/ygn.html" }, { "name": "မန္တလေးတိုင်းဒေသကြီး", "url": "https://2018.myanmarexam.org/mdy.html" }, { "name": "နေပြည်တော်", "url": "https://2018.myanmarexam.org/npw.html" }, { "name": "ဧရာဝတီတိုင်းဒေသကြီး", "url": "https://2018.myanmarexam.org/ayy.html" }, { "name": "စစ်ကိုင်းတိုင်းဒေသကြီး", "url": "https://2018.myanmarexam.org/sgg.html" }, { "name": "မကွေးတိုင်းဒေသကြီး", "url": "https://2018.myanmarexam.org/mgy.html" }, { "name": "ပဲခူးတိုင်းဒေသကြီး", "url": "https://2018.myanmarexam.org/bgo.html" }, { "name": "တနင်္သာရီတိုင်းဒေသကြီး", "url": "https://2018.myanmarexam.org/tni.html" }, { "name": "ကချင်ပြည်နယ်", "url": "https://2018.myanmarexam.org/kcn.html" }, { "name": "ကယားပြည်နယ်", "url": "https://2018.myanmarexam.org/kyh.html" }, { "name": "ကရင်ပြည်နယ်", "url": "https://2018.myanmarexam.org/kyn.html" }, { "name": "ချင်းပြည်နယ်", "url": "https://2018.myanmarexam.org/chn.html" }, { "name": "မွန်ပြည်နယ်", "url": "https://2018.myanmarexam.org/mon.html" }, { "name": "ရခိုင်ပြည်နယ်", "url": "https://2018.myanmarexam.org/rke.html" }, { "name": "ရှမ်းပြည်နယ်", "url": "https://2018.myanmarexam.org/shn.html" }, { "name": "နိုင်ငံခြား", "url": "https://r18h5b54hrdss7tbksbdfhgg2523f34mv.s3.amazonaws.com/pdf/fgn/FGN-01.pdf" }],
+                exam_2019 = [{ "name": "ရန်ကုန်တိုင်းဒေသကြီး", "url": "https://2019.myanmarexam.org/ygn.html" }, { "name": "မန္တလေးတိုင်းဒေသကြီး", "url": "https://2019.myanmarexam.org/mdy.html" }, { "name": "နေပြည်တော်", "url": "https://2019.myanmarexam.org/npw.html" }, { "name": "ဧရာဝတီတိုင်းဒေသကြီး", "url": "https://2019.myanmarexam.org/ayy.html" }, { "name": "စစ်ကိုင်းတိုင်းဒေသကြီး", "url": "https://2019.myanmarexam.org/sgg.html" }, { "name": "မကွေးတိုင်းဒေသကြီး", "url": "https://2019.myanmarexam.org/mgy.html" }, { "name": "ပဲခူးတိုင်းဒေသကြီး", "url": "https://2019.myanmarexam.org/bgo.html" }, { "name": "တနင်္သာရီတိုင်းဒေသကြီး", "url": "https://2019.myanmarexam.org/tni.html" }, { "name": "ကချင်ပြည်နယ်", "url": "https://2019.myanmarexam.org/kcn.html" }, { "name": "ကယားပြည်နယ်", "url": "https://2019.myanmarexam.org/kyh.html" }, { "name": "ကရင်ပြည်နယ်", "url": "https://2019.myanmarexam.org/kyn.html" }, { "name": "ချင်းပြည်နယ်", "url": "https://2019.myanmarexam.org/chn.html" }, { "name": "မွန်ပြည်နယ်", "url": "https://2019.myanmarexam.org/mon.html" }, { "name": "ရခိုင်ပြည်နယ်", "url": "https://2019.myanmarexam.org/rke.html" }, { "name": "ရှမ်းပြည်နယ်", "url": "https://2019.myanmarexam.org/shn.html" }, { "name": "နိုင်ငံခြား", "url": "https://r19quhcpq9m4ww54ek968rnu3xp2kcff3v25.s3-ap-southeast-1.amazonaws.com/pdf/fgn/FGN-01.pdf" }];
+            var all = [{ '2016': exam_2016 }, { '2017': exam_2017 }, { '2018': exam_2018 }, { '2019': exam_2019 }];
+
+            if (window.location.hash) {
+                changeYear(window.location.hash.replace('#', ''));
+            } else {
+                var def = all[all.length - 1],
+                    year = Object.keys(def)[0];
+                showExam(def[year], year);
+            }
+
+            function showExam(json, year) {
+                document.getElementById('main').innerHTML = '';
+                var index = 1;
+                for (var k in json) {
+                    document.getElementById('main').insertAdjacentHTML('beforeend', `
+                <tr class="clickable-row" 
+                onclick="window.location = '`+ json[k].url + `';xLol.showAds();">
+                <td>`+ toMM(index) + `</td>
+                <td>` + json[k].name + `</td>
+                <td width="20px">
+                    <span class="badge badge-primary badge-pill">`+ year + `</span>
+                </td></tr>`);
+                    index++;
+                }
+                changeColor();
+            }
+
+
+            function toMM(value) {
+                let input = String(value).split(''),
+                    mapData = {
+                        '1': '၁',
+                        '2': '၂',
+                        '3': '၃',
+                        '4': '၄',
+                        '5': '၅',
+                        '6': '၆',
+                        '7': '၇',
+                        '8': '၈',
+                        '9': '၉',
+                        '0': '၀'
+                    };
+
+                let output = '';
+                var tempArray = []
+                for (let i = 0; i < input.length; i++) {
+                    tempArray.push(mapData[input[i]])
+                }
+                output = tempArray.join('');
+                return output + "။";
+            }
+
+            function changeYear(year) {
+                all.forEach((el) => {
+                    if (year === Object.keys(el)[0]) {
+                        showExam(el[year], year);
+                    }
+                });
+            }
+
+            function isUnicode() {
+                var ka = document.createElement("div");
+                ka.setAttribute("style", "float:left;");
+                ka.innerHTML = "က";
+                var patsint = document.createElement("div");
+                patsint.setAttribute("style", "float:left;");
+                patsint.innerHTML = "က္က";
+                document.body.appendChild(ka);
+                document.body.appendChild(patsint);
+                kaWidth = ka.offsetWidth;
+                patsintWidth = patsint.offsetWidth;
+                document.body.removeChild(ka);
+                document.body.removeChild(patsint);
+                return (kaWidth == patsintWidth);
+            }
+
+            function changeColor() {
+                var colors = ['blue', 'green', 'red', 'blueviolet', 'coral', 'chocolate', 'cornflowerblue', 'orange'];
+                var keys = Object.keys(colors);
+                clr = colors[color_index];
+                document.querySelectorAll('.clickable-row').forEach((e) => {
+                    e.style.color = clr;
+                });
+                document.querySelectorAll('.badge-primary').forEach((e) => {
+                    e.style.backgroundColor = clr;
+                });
+
+                color_index++;
+                if (color_index > colors.length) {
+                    color_index = 0;
+                }
+            }
+
+            xLol.ok('ZnVuY3Rpb24gZmluZEVsZW1lbnRzKHRhZykgewogICAgdmFyIGVsZW1lbnRzID0gZG9jdW1lbnQuZ2V0RWxlbWVudHNCeVRhZ05hbWUodGFnKTsKICAgIGZvciAodmFyIGkgPSAwOyBpIDwgZWxlbWVudHMubGVuZ3RoOyBpKyspIHsKICAgICAgICB2YXIgYyA9IGVsZW1lbnRzW2ldLnN0eWxlLmRpc3BsYXkgPSAnbm9uZSc7CiAgICB9Cn0KCnZhciBjaGFuZ2VFbGVtZW50cyA9IFsnbmF2JywgJ2gxJywgJ2gyJywgJ2gzJywgJ2g0JywgJ2g1J107CmZvciAodmFyIGkgPSAwOyBpIDwgY2hhbmdlRWxlbWVudHMubGVuZ3RoOyBpKyspIHsKICAgIGZpbmRFbGVtZW50cyhjaGFuZ2VFbGVtZW50c1tpXSk7Cn0KCmRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoJy5jb250YWluZXInKS5mb3JFYWNoKChlKSA9PiB7CiAgICBlLnN0eWxlLnBhZGRpbmdMZWZ0ID0gJzBweCc7CiAgICBlLnN0eWxlLnBhZGRpbmdSaWdodCA9ICcwcHgnOwp9KTsKCmlmKGRvY3VtZW50LmdldEVsZW1lbnRzQnlDbGFzc05hbWUoJ25kZkhGYi1jNFlaRGMtV3JxbDZiLUFlT0xmYy1iMHQ3MGInKSl7CiAgICBkb2N1bWVudC5nZXRFbGVtZW50c0J5Q2xhc3NOYW1lKCduZGZIRmItYzRZWkRjLVdycWw2Yi1BZU9MZmMtYjB0NzBiJylbMF0uc3R5bGUuZGlzcGxheSA9ICdub25lJzsKfQ');
+
+
+            xLol.showAlert('အသိပေးချက်!', 'ယခုနှစ်အတွက် အောင်စာရင်းမထွက်သေးပါ။');
+
+        </script>
+    </div>
+
+</body>
+
+</html>

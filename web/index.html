@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Myanmar Exam Result</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href='https://mmwebfonts.comquas.com/fonts/?font=pyidaungsu' />
+    <style>
+        body {
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .topnav {
+            overflow: hidden;
+            background-color: #2196F3;
+        }
+
+        .topnav a {
+            display: block;
+            color: black;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .topnav a.active {
+            background-color: #2196F3;
+            color: white;
+        }
+
+
+        .main {
+            padding: 16px;
+        }
+
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        .clickable-row {
+            font-family: Pyidaungsu;
+            color: #007bff;
+        }
+
+        tr {
+            cursor: pointer;
+            cursor: hand;
+            border: 1px solid #dddddd;
+            border-collapse: collapse;
+        }
+
+        .badge-primary {
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            background-color: #007bff;
+        }
+
+        .badge-pill {
+            border-radius: 10rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .30em .5em;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Sidebar */
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .sidenav {
+                padding-top: 15px;
+            }
+
+            .sidenav a {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="https://mmrexamresult.blogspot.com/#2019">2019</a>
+        <a href="https://mmrexamresult.blogspot.com/#2018">2018</a>
+        <a href="https://mmrexamresult.blogspot.com/#2017">2017</a>
+        <a href="https://mmrexamresult.blogspot.com/#2016">2016</a>
+    </div>
+
+    <div class="topnav">
+        <a class="active" style="cursor:pointer;float: left;" onclick="openNav()">&#9776;</a>
+        <a class="active" style="float: right;" onclick="return loadHome()" href="#home">&#9851;</a>
+    </div>
+
+    <div class="main">
+        <table>
+            <tbody id="main">
+
+            </tbody>
+        </table>
+        <script type="text/javascript">
+
+            var getJSON = function (url, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.responseType = 'json';
+                xhr.onload = function () {
+                    var status = xhr.status;
+                    if (status === 200) {
+                        callback(null, xhr.response);
+                    } else {
+                        callback(status, xhr.response);
+                    }
+                };
+                xhr.send();
+            };
+
+            var yearOfJs = '2019',years,year;
+            if (window.location.hash) {
+                var tmp = window.location.hash.replace('#', '');
+                if (tmp.match(/^\d*(\.\d+)?$/)) {
+                    yearOfJs = tmp;
+                }
+            }
+            yearOfJs = yearOfJs + '.json';
+
+            getJSON('https://cdn.jsdelivr.net/gh/KhunHtetzNaing/htetz-naing@3756087dcf4722f40673a1cf7edda2aa58b2e665/data.js',
+                function (err, data) {
+                    if (err !== null) {
+                        alert('Something went wrong: ' + err);
+                    } else {
+                        years = data.years;
+                        year = data.year;
+                        loadHome();
+                    }
+                });
+
+            function openNav() {
+                document.getElementById("mySidenav").style.width = "250px";
+            }
+
+            function closeNav() {
+                document.getElementById("mySidenav").style.width = "0";
+            }
+
+            function loadHome() {
+                document.getElementById('main').innerHTML = '';
+                for (var k in years) {
+                    document.getElementById('main').insertAdjacentHTML('beforeend', `
+                <tr class="clickable-row" 
+                onclick="showExam(`+ k + `);">
+                <td>`+ years[k].no + `</td>
+                <td>` + years[k].name + `</td>
+                <td width="20px">
+                    <span class="badge badge-primary badge-pill">`+ year + `</span>
+                </td></tr>`);
+                }
+                return false;
+            }
+
+            function showExam(k) {
+                var json = years[k].cities;
+                document.getElementById('main').innerHTML = '';
+                for (var k in json) {
+                    document.getElementById('main').insertAdjacentHTML('beforeend', `
+                <tr class="clickable-row" 
+                onclick="window.location = '`+ json[k].href + `';">
+                <td>`+ json[k].no + `။</td>
+                <td>` + json[k].name + `</td>
+                <td width="20px">
+                    <span class="badge">`+ json[k].table_no + `</span>
+                </td></tr>`);
+                }
+                changeColor();
+            }
+
+            function changeYear(year) {
+                all.forEach((el) => {
+                    if (year === Object.keys(el)[0]) {
+                        showExam(el[year], year);
+                    }
+                });
+            }
+
+
+            function changeColor() {
+                var colors = ['blue', 'green', 'red', 'blueviolet', 'coral', 'chocolate', 'cornflowerblue', 'orange'];
+                var clr = colors[Math.floor(Math.random() * colors.length)];
+                document.querySelectorAll('.clickable-row').forEach((e) => {
+                    e.style.color = clr;
+                });
+
+                document.querySelectorAll('.badge-primary').forEach((e) => {
+                    e.style.backgroundColor = clr;
+                });
+            }
+
+        </script>
+    </div>
+
+</body>
+
+</html>
