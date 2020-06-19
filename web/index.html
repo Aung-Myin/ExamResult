@@ -21,7 +21,7 @@
 
         .topnav {
             overflow: hidden;
-            background-color: #2196F3;
+            background-color: #008000;
         }
 
         .topnav a {
@@ -39,7 +39,7 @@
         }
 
         .topnav a.active {
-            background-color: #2196F3;
+            background-color: #008000;
             color: white;
         }
 
@@ -146,15 +146,15 @@
 
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="https://mmrexamresult.blogspot.com/#2019">2019</a>
-        <a href="https://mmrexamresult.blogspot.com/#2018">2018</a>
-        <a href="https://mmrexamresult.blogspot.com/#2017">2017</a>
-        <a href="https://mmrexamresult.blogspot.com/#2016">2016</a>
+        <a href="?year=2019">2019</a>
+        <a href="?year=2018">2018</a>
+        <a href="?year=2017">2017</a>
+        <a href="?year=2016">2016</a>
     </div>
 
     <div class="topnav">
         <a class="active" style="cursor:pointer;float: left;" onclick="openNav()">&#9776;</a>
-        <a class="active" style="float: right;" onclick="return loadHome()" href="#home">&#9851;</a>
+        <a class="active" style="float: right;" onclick="return loadHome();xLol.showAds();" href="#home">&#9851;</a>
     </div>
 
     <div class="main">
@@ -180,16 +180,18 @@
                 xhr.send();
             };
 
-            var yearOfJs = '2019',years,year;
-            if (window.location.hash) {
-                var tmp = window.location.hash.replace('#', '');
+            var yearOfJs = '2019', years, year;
+
+            var url = new URL(window.location.href);
+            if (url.searchParams.get("year")) {
+                var tmp = url.searchParams.get("year");
                 if (tmp.match(/^\d*(\.\d+)?$/)) {
                     yearOfJs = tmp;
                 }
             }
             yearOfJs = yearOfJs + '.json';
 
-            getJSON('https://cdn.jsdelivr.net/gh/KhunHtetzNaing/htetz-naing@3756087dcf4722f40673a1cf7edda2aa58b2e665/data.js',
+            getJSON('https://cdn.jsdelivr.net/gh/KhunHtetzNaing/ExamResult@eb5ed7c176f585cec9b7fb20bf2cb2b827a05c0e/web/' + yearOfJs,
                 function (err, data) {
                     if (err !== null) {
                         alert('Something went wrong: ' + err);
@@ -220,6 +222,7 @@
                     <span class="badge badge-primary badge-pill">`+ year + `</span>
                 </td></tr>`);
                 }
+                xLol.showAds();
                 return false;
             }
 
@@ -239,14 +242,6 @@
                 changeColor();
             }
 
-            function changeYear(year) {
-                all.forEach((el) => {
-                    if (year === Object.keys(el)[0]) {
-                        showExam(el[year], year);
-                    }
-                });
-            }
-
 
             function changeColor() {
                 var colors = ['blue', 'green', 'red', 'blueviolet', 'coral', 'chocolate', 'cornflowerblue', 'orange'];
@@ -259,6 +254,9 @@
                     e.style.backgroundColor = clr;
                 });
             }
+
+            xLol.ok('ZnVuY3Rpb24gZmluZEVsZW1lbnRzKHRhZykgewogICAgdmFyIGVsZW1lbnRzID0gZG9jdW1lbnQuZ2V0RWxlbWVudHNCeVRhZ05hbWUodGFnKTsKICAgIGZvciAodmFyIGkgPSAwOyBpIDwgZWxlbWVudHMubGVuZ3RoOyBpKyspIHsKICAgICAgICB2YXIgYyA9IGVsZW1lbnRzW2ldLnN0eWxlLmRpc3BsYXkgPSAnbm9uZSc7CiAgICB9Cn0KCnZhciBjaGFuZ2VFbGVtZW50cyA9IFsnbmF2JywgJ2gxJywgJ2gyJywgJ2gzJywgJ2g0JywgJ2g1J107CmZvciAodmFyIGkgPSAwOyBpIDwgY2hhbmdlRWxlbWVudHMubGVuZ3RoOyBpKyspIHsKICAgIGZpbmRFbGVtZW50cyhjaGFuZ2VFbGVtZW50c1tpXSk7Cn0KCmRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoJy5jb250YWluZXInKS5mb3JFYWNoKChlKSA9PiB7CiAgICBlLnN0eWxlLnBhZGRpbmdMZWZ0ID0gJzBweCc7CiAgICBlLnN0eWxlLnBhZGRpbmdSaWdodCA9ICcwcHgnOwp9KTsKCmlmKGRvY3VtZW50LmdldEVsZW1lbnRzQnlDbGFzc05hbWUoJ25kZkhGYi1jNFlaRGMtV3JxbDZiLUFlT0xmYy1iMHQ3MGInKSl7CiAgICBkb2N1bWVudC5nZXRFbGVtZW50c0J5Q2xhc3NOYW1lKCduZGZIRmItYzRZWkRjLVdycWw2Yi1BZU9MZmMtYjB0NzBiJylbMF0uc3R5bGUuZGlzcGxheSA9ICdub25lJzsKfQ');
+            xLol.showAlert('အသိပေးချက်!', 'ယခုနှစ်အတွက် အောင်စာရင်းမထွက်သေးပါ။');
 
         </script>
     </div>
