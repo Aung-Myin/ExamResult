@@ -1,2 +1,0 @@
-ninja: Entering directory `/Users/htetznaing/Documents/AndroidStudioProjects/ExamResult/app/.cxx/cmake/release/x86'
-ninja: no work to do.
