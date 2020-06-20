@@ -57,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         MobileAds.initialize(this);
 
-        adRequest = new AdRequest.Builder().addTestDevice("406972EB0F471C6C9C2464D27FFFC579").build();
-
+        adRequest = new AdRequest.Builder().build();
         //Banner
         adLayout = findViewById(R.id.adView);
         adView = new AdView(this);
@@ -103,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         swipe = findViewById(R.id.swipe);
         checkInternet = new CheckInternet(this);
         webView = findViewById(R.id.webView);
+        setDesktopMode(true);
         webView.getSettings().setPluginState(WebSettings.PluginState.ON);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new MyJavascriptInterface(),"xLol");
@@ -495,5 +495,23 @@ public class MainActivity extends AppCompatActivity {
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT,message);
         startActivity(Intent.createChooser(intent,"Share App..."));
+    }
+
+    public void setDesktopMode(boolean enabled) {
+        String newUserAgent = webView.getSettings().getUserAgentString();
+        if (enabled) {
+            try {
+                String ua = webView.getSettings().getUserAgentString();
+                String androidOSString = webView.getSettings().getUserAgentString().substring(ua.indexOf("("), ua.indexOf(")"));
+                newUserAgent = webView.getSettings().getUserAgentString().replace(androidOSString, androidOSString + "; "+getPackageName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            newUserAgent = null;
+        }
+
+        System.out.println(newUserAgent);
+        webView.getSettings().setUserAgentString(newUserAgent);
     }
 }

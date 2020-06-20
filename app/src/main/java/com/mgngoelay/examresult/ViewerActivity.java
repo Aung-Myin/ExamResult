@@ -19,14 +19,14 @@ public class ViewerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewer);
+
+        if (!getIntent().hasExtra("url")){
+            finish();
+        }
+
         webView = findViewById(R.id.webView);
         swipeRefreshLayout = findViewById(R.id.swipe);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                webView.loadUrl(getIntent().getStringExtra("url"));
-            }
-        });
+        swipeRefreshLayout.setEnabled(false);
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setSupportZoom(true);
