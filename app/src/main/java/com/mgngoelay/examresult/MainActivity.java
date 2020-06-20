@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDownloadStart(String s, String s1, String s2, String s3, long l) {
                 download_link = s;
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
                         .setCancelable(false)
                         .setTitle(MyanmarString.get("ရွေးချယ်ပါ",typeface,Color.BLACK))

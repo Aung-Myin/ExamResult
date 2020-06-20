@@ -173,11 +173,81 @@
             bottom: 30px;
             font-size: 17px;
         }
+
+        /* snackbar */
+
+        #snackbar.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @-webkit-keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+
+        .overlay3 {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            overflow-y: auto;
+            overflow-x: hidden;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s;
+        }
     </style>
 </head>
 
 <body>
-
+    <div id="myCanvasNav" class="overlay3" onclick="closeNav()"></div>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <a href="?year=2019">2019</a>
@@ -192,7 +262,6 @@
         <a class="active" style="float: right;" onclick="return loadHome();try{xLol.showAds();}catch(e){}"
             href="#home">&#9851;</a>
     </div>
-
     <div class="main">
         <table>
             <tbody id="main">
@@ -201,56 +270,98 @@
         </table>
     </div>
 
+    <div id="snackbar">Some text some message..</div>
     <script type="text/javascript">
-        var getJSON = function (url, callback) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.responseType = 'json';
-            xhr.onload = function () {
-                var status = xhr.status;
-                if (status === 200) {
-                    callback(null, xhr.response);
-                } else {
-                    callback(status, xhr.response);
+
+        function closeSnackBar(){
+            var x = document.getElementById("snackbar");
+            x.className = x.className.replace("show", "");
+        }
+        function showSnackBar(message,autoClose) {
+            var x = document.getElementById("snackbar");
+            if (message) {
+                x.innerHTML = message;
+            }
+            x.className = "show";
+            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+        }
+
+        function isMyApp() {
+            return true;
+            if (navigator.userAgent.match(/wv/i)) {
+                if (navigator.userAgent.match(/com.lee2la2.examresult/i)) {
+                    return true;
                 }
-            };
-            xhr.send();
-        };
-
-        var yearOfJs = '2019', years, year;
-
-        var url = new URL(window.location.href);
-        if (url.searchParams.get("year")) {
-            var tmp = url.searchParams.get("year");
-            if (tmp.match(/^\d*(\.\d+)?$/)) {
-                yearOfJs = tmp;
+                return false;
             }
         }
-        yearOfJs = yearOfJs + '.json';
 
-        getJSON('https://cdn.jsdelivr.net/gh/KhunHtetzNaing/ExamResult@852b9ba5deee82d35c25e8fca38d7c7203b4e392/web/' + yearOfJs,
-            function (err, data) {
-                if (err !== null) {
-                    alert('Something went wrong: ' + err);
-                } else {
-                    years = data.years;
-                    year = data.year;
-                    loadHome();
+        if (!isMyApp()) {
+            showSnackBar('ERROR 404');
+            try {
+                xLol.showAlert('ဝမ်းနည်းပါတယ်!', 'သင့်တောင်းဆိုမှုကိုမတုံ့ပြန်နိုင်ပါ။');
+            } catch (e) {
+
+            }
+        } else {
+            var getJSON = function (url, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.responseType = 'json';
+                xhr.onloadend = e => { closeSnackBar();console.log(`Completed ${e.loaded}`, e); }
+                xhr.onloadstart = e => { console.log(`Started`, e);showSnackBar('Getting data...') }
+                xhr.onprogress = e => { console.log(`Loaded ${e.loaded} bytes`, e); }
+                xhr.onload = function () {
+                    var status = xhr.status;
+                    if (status === 200) {
+                        callback(null, xhr.response);
+                    } else {
+                        callback(status, xhr.response);
+                    }
+                };
+                xhr.send();
+            };
+
+            var yearOfJs = '2019', years, year;
+
+            var url = new URL(window.location.href);
+            if (url.searchParams.get("year")) {
+                var tmp = url.searchParams.get("year");
+                if (tmp.match(/^\d*(\.\d+)?$/)) {
+                    yearOfJs = tmp;
                 }
-            });
+            }
+            yearOfJs = yearOfJs + '.json';
 
-        function openNav() {
-            document.getElementById("mySidenav").style.width = "250px";
-        }
+            getJSON('https://cdn.jsdelivr.net/gh/KhunHtetzNaing/ExamResult@852b9ba5deee82d35c25e8fca38d7c7203b4e392/web/' + yearOfJs,
+                function (err, data) {
+                    if (err !== null) {
+                        alert('Something went wrong: ' + err);
+                    } else {
+                        years = data.years;
+                        year = data.year;
+                        loadHome();
+                    }
+                });
 
-        function closeNav() {
-            document.getElementById("mySidenav").style.width = "0";
-        }
+            function openNav() {
+                document.getElementById("mySidenav").style.width = "250px";
+                var cvas = document.getElementsByClassName('overlay3').item(0);
+                cvas.style.width = '100%';
+                cvas.style.opacity = '0.8';
+            }
 
-        function loadHome() {
-            document.getElementById('main').innerHTML = '';
-            for (var k in years) {
-                document.getElementById('main').insertAdjacentHTML('beforeend', `
+            function closeNav() {
+                document.getElementById("mySidenav").style.width = "0";
+                var cvas = document.getElementsByClassName('overlay3').item(0);
+                cvas.style.width = '0%';
+                cvas.style.opacity = '0';
+            }
+
+            function loadHome() {
+                document.getElementById('main').innerHTML = '';
+                for (var k in years) {
+                    document.getElementById('main').insertAdjacentHTML('beforeend', `
                 <tr class="clickable-row" 
                 onclick="showExam(`+ k + `);">
                 <td>`+ years[k].no + `</td>
@@ -258,19 +369,19 @@
                 <td width="20px">
                     <span class="badge badge-primary badge-pill">`+ year + `</span>
                 </td></tr>`);
+                }
+                try { xLol.showAds() } catch (e) { };
+                return false;
             }
-            try { xLol.showAds() } catch (e) { };
-            return false;
-        }
 
-        function showExam(k) {
-            if (years[k].href) {
-                window.location = years[k].href;
-            } else {
-                var json = years[k].cities;
-                document.getElementById('main').innerHTML = '';
-                for (var k in json) {
-                    document.getElementById('main').insertAdjacentHTML('beforeend', `
+            function showExam(k) {
+                if (years[k].href) {
+                    window.location = years[k].href;
+                } else {
+                    var json = years[k].cities;
+                    document.getElementById('main').innerHTML = '';
+                    for (var k in json) {
+                        document.getElementById('main').insertAdjacentHTML('beforeend', `
                 <tr class="clickable-row" 
                 onclick="window.location = '`+ json[k].href + `';">
                 <td>`+ json[k].no + `။</td>
@@ -278,29 +389,29 @@
                 <td width="20px">
                     <span class="badge">`+ json[k].table_no + `</span>
                 </td></tr>`);
+                    }
+                    changeColor();
                 }
-                changeColor();
             }
-        }
 
+            function changeColor() {
+                var colors = ['blue', 'green', 'red', 'blueviolet', 'coral', 'chocolate', 'cornflowerblue', 'orange'];
+                var clr = colors[Math.floor(Math.random() * colors.length)];
+                document.querySelectorAll('.clickable-row').forEach((e) => {
+                    e.style.color = clr;
+                });
 
-        function changeColor() {
-            var colors = ['blue', 'green', 'red', 'blueviolet', 'coral', 'chocolate', 'cornflowerblue', 'orange'];
-            var clr = colors[Math.floor(Math.random() * colors.length)];
-            document.querySelectorAll('.clickable-row').forEach((e) => {
-                e.style.color = clr;
-            });
+                document.querySelectorAll('.badge-primary').forEach((e) => {
+                    e.style.backgroundColor = clr;
+                });
+            }
 
-            document.querySelectorAll('.badge-primary').forEach((e) => {
-                e.style.backgroundColor = clr;
-            });
-        }
+            try {
+                xLol.showAlert('အသိပေးချက်!', 'ယခုနှစ်အတွက် အောင်စာရင်းမထွက်သေးပါ။');
+                xLol.ok('aWYgKGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJ1tyb2xlPSJ0b29sYmFyIl0nKSkgewogICAgdmFyIHRvb2xiYXIgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCdbcm9sZT0idG9vbGJhciJdJyk7CiAgICB0b29sYmFyLnF1ZXJ5U2VsZWN0b3JBbGwoJ2RpdicpLmZvckVhY2goKGUpID0+IHsKICAgICAgICBlLnN0eWxlLmRpc3BsYXkgPSAnbm9uZSc7CiAgICB9KTsKfQ==');
+            } catch (e) {
 
-        try {
-            xLol.showAlert('အသိပေးချက်!', 'ယခုနှစ်အတွက် အောင်စာရင်းမထွက်သေးပါ။');
-            xLol.ok('aWYgKGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJ1tyb2xlPSJ0b29sYmFyIl0nKSkgewogICAgdmFyIHRvb2xiYXIgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCdbcm9sZT0idG9vbGJhciJdJyk7CiAgICB0b29sYmFyLnF1ZXJ5U2VsZWN0b3JBbGwoJ2RpdicpLmZvckVhY2goKGUpID0+IHsKICAgICAgICBlLnN0eWxlLmRpc3BsYXkgPSAnbm9uZSc7CiAgICB9KTsKfQ==');
-        } catch (e) {
-
+            }
         }
     </script>
 
