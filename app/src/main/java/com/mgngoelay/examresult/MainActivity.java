@@ -15,6 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
+import android.webkit.URLUtil;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -22,14 +23,15 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdError;
+import com.facebook.ads.AdSize;
+import com.facebook.ads.AdView;
+import com.facebook.ads.AudienceNetworkAds;
+import com.facebook.ads.InterstitialAd;
+import com.facebook.ads.InterstitialAdListener;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
 
 public class MainActivity extends AppCompatActivity {
     WebView webView;
@@ -38,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     public static String ok = null;
     Typeface typeface;
     String message="";
-    AdRequest adRequest;
     AdView adView;
     InterstitialAd interstitialAd;
     LinearLayout adLayout;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton share,exit,about,refresh;
     String download_link = null;
     String mainSite = "https://mmrexamresult.blogspot.com/";
+    String HOST = "mmrexamresult.blogspot.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,48 +57,51 @@ public class MainActivity extends AppCompatActivity {
 
         fmenu = findViewById(R.id.fmenu);
 
-        MobileAds.initialize(this);
-
-        adRequest = new AdRequest.Builder().build();
+        AudienceNetworkAds.initialize(this);
         //Banner
         adLayout = findViewById(R.id.adView);
-        adView = new AdView(this);
+        adView = new AdView(this,Constants.getBanner(), AdSize.BANNER_HEIGHT_50);
         adLayout.addView(adView);
-        adView.setAdSize(AdSize.SMART_BANNER);
-        adView.setAdUnitId(Constants.getBanner());
-        adView.setAdListener(new AdListener(){
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                adView.loadAd(adRequest);
-            }
-
-            @Override
-            public void onAdClosed() {
-                super.onAdClosed();
-                adView.loadAd(adRequest);
-            }
-
-        });
-        adView.loadAd(adRequest);
+        adView.loadAd();
 
         //Interstitial
-        interstitialAd = new InterstitialAd(this);
-        interstitialAd.setAdUnitId(Constants.getInterstitial());
-        interstitialAd.setAdListener(new AdListener(){
+        interstitialAd = new InterstitialAd(this,Constants.getInterstitial());
+        interstitialAd.setAdListener(new InterstitialAdListener() {
             @Override
-            public void onAdClosed() {
-                super.onAdClosed();
-                interstitialAd.loadAd(adRequest);
+            public void onInterstitialDisplayed(Ad ad) {
+                if (!interstitialAd.isAdLoaded()){
+                    interstitialAd.loadAd();
+                }
             }
 
             @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                interstitialAd.loadAd(adRequest);
+            public void onInterstitialDismissed(Ad ad) {
+                if (!interstitialAd.isAdLoaded()){
+                    interstitialAd.loadAd();
+                }
+            }
+
+            @Override
+            public void onError(Ad ad, AdError adError) {
+
+            }
+
+            @Override
+            public void onAdLoaded(Ad ad) {
+
+            }
+
+            @Override
+            public void onAdClicked(Ad ad) {
+
+            }
+
+            @Override
+            public void onLoggingImpression(Ad ad) {
+
             }
         });
-        interstitialAd.loadAd(adRequest);
+        interstitialAd.loadAd();
 
         typeface = Typeface.createFromAsset(getAssets(),"mm.ttf");
         swipe = findViewById(R.id.swipe);
@@ -131,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLoadResource(WebView view, String url) {
                 super.onLoadResource(view, url);
-                if (!webView.getUrl().contains("mmrexamresult.blogspot.com")) {
+                if (!webView.getUrl().contains(HOST)) {
                     inject();
                 }
             }
@@ -149,46 +154,42 @@ public class MainActivity extends AppCompatActivity {
 
         webView.setDownloadListener(new DownloadListener() {
             @Override
-            public void onDownloadStart(String s, String s1, String s2, String s3, long l) {
-                download_link = s;
-
+            public void onDownloadStart(String url, String userAgent,String contentDisposition, String mimetype, long contentLength) {
+                download_link = url;
+                final boolean isPDF = mimetype.contains("pdf");
+                swipe.setRefreshing(false);
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
                         .setCancelable(false)
-                        .setTitle(MyanmarString.get("ရွေးချယ်ပါ",typeface,Color.BLACK))
-                        .setMessage(MyanmarString.get("Download လုပ်မလား\n" +
-                                "တိုက်ရိုက်ဖွင့်ကြည့်မလား ?",typeface,Color.BLACK))
-                        .setPositiveButton("Download", new DialogInterface.OnClickListener() {
+                        .setTitle(MyanmarString.get(isPDF ? "ရွေးချယ်ပါ" : "အသိပေးချက်",typeface,Color.BLACK))
+                        .setMessage(MyanmarString.get(isPDF ? "Download လုပ်မလား\n" + "တိုက်ရိုက်ဖွင့်ကြည့်မလား ?" : URLUtil.guessFileName(url,contentDisposition,mimetype) +" ကို Download ပြုလုပ်မှာလား ?",typeface,Color.BLACK))
+                        .setPositiveButton(isPDF ? "Download" : "လုပ်မယ်", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (interstitialAd.isLoaded()){
-                                    interstitialAd.show();
-                                }else interstitialAd.loadAd(adRequest);
+                                showAdz();
                                 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(download_link)));
                             }
                         })
-                        .setNegativeButton("ဖွင့်မည်", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(isPDF ? "ဖွင့်မည်" : "မလုပ်ပါ", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (checkInternet()){
-                                    swipe.setRefreshing(false);
-                                    String readURL = "https://drive.google.com/viewerng/viewer?url="+download_link;
-//                                    webView.loadUrl(readURL);
-                                    startActivityForResult(new Intent(MainActivity.this,ViewerActivity.class).putExtra("url",readURL),101);
+                                if (isPDF) {
+                                    if (checkInternet()) {
+                                        swipe.setRefreshing(false);
+                                        String readURL = "https://drive.google.com/viewerng/viewer?url=" + download_link;
+                                        startActivityForResult(new Intent(MainActivity.this, ViewerActivity.class).putExtra("url", readURL), 101);
+                                    }
                                 }
-                                swipe.setEnabled(false);
-                                if (interstitialAd.isLoaded()){
-                                    interstitialAd.show();
-                                }else interstitialAd.loadAd(adRequest);
-                            }
-                        })
-                        .setNeutralButton("ဘာမှမလုပ်ပါ", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (interstitialAd.isLoaded()){
-                                    interstitialAd.show();
-                                }else interstitialAd.loadAd(adRequest);
+                                showAdz();
                             }
                         });
+                if (isPDF) {
+                        builder.setNeutralButton("ဘာမှမလုပ်ပါ", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            showAdz();
+                        }
+                    });
+                }
                 final AlertDialog dialog = builder.create();
 
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -292,9 +293,53 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (interstitialAd.isLoaded()){
-                        interstitialAd.show();
-                    }else interstitialAd.loadAd(adRequest);
+                    showAdz();
+                }
+            });
+        }
+
+        @SuppressWarnings("unused")
+        @JavascriptInterface
+        public void openBrowser(final String url) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+                }
+            });
+        }
+
+        @SuppressWarnings("unused")
+        @JavascriptInterface
+        public void closeApp() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            });
+        }
+
+        @SuppressWarnings("unused")
+        @JavascriptInterface
+        public void setHostName(final String hostName) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    HOST = hostName;
+                }
+            });
+        }
+
+        @SuppressWarnings("unused")
+        @JavascriptInterface
+        public void canExit(final boolean exit) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (exit){
+                        letExit();
+                    }
                 }
             });
         }
@@ -318,9 +363,7 @@ public class MainActivity extends AppCompatActivity {
                                 .setPositiveButton("ဟုတ်ပြီ", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if (interstitialAd.isLoaded()){
-                                            interstitialAd.show();
-                                        }else interstitialAd.loadAd(adRequest);
+                                        showAds();
                                     }
                                 });
                         final AlertDialog dialog = builder.create();
@@ -355,9 +398,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==101){
-            if (interstitialAd.isLoaded()){
-                interstitialAd.show();
-            }else interstitialAd.loadAd(adRequest);
+            showAdz();
         }
     }
 
@@ -366,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
         if (webView.canGoBack()){
             webView.goBack();
         }else {
-            letExit();
+            webView.loadUrl("javascript:(function() {letExit();})()");
         }
     }
 
@@ -391,18 +432,14 @@ public class MainActivity extends AppCompatActivity {
                             webView.setVisibility(View.VISIBLE);
                             webView.reload();
                             swipe.setRefreshing(true);
-                            if (interstitialAd.isLoaded()){
-                                interstitialAd.show();
-                            }else interstitialAd.loadAd(adRequest);
+                            showAdz();
                         }
                     }
                 })
                 .setNegativeButton("ပိတ်မည်", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (interstitialAd.isLoaded()){
-                            interstitialAd.show();
-                        }else interstitialAd.loadAd(adRequest);
+                        showAdz();
                         letExit();
                     }
                 });
@@ -432,9 +469,7 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("မထွက်သေးပါ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (interstitialAd.isLoaded()){
-                            interstitialAd.show();
-                        }else interstitialAd.loadAd(adRequest);
+                        showAdz();
                     }
                 });
         final AlertDialog dialog = builder.create();
@@ -463,9 +498,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("ဟုတ်ပြီ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (interstitialAd.isLoaded()){
-                            interstitialAd.show();
-                        }else interstitialAd.loadAd(adRequest);
+                        showAdz();
                     }
                 });
         final AlertDialog dialog = builder.create();
@@ -514,5 +547,11 @@ public class MainActivity extends AppCompatActivity {
 
         System.out.println(newUserAgent);
         webView.getSettings().setUserAgentString(newUserAgent);
+    }
+
+    private void showAdz(){
+        if (interstitialAd.isAdLoaded()){
+            interstitialAd.show();
+        }else interstitialAd.loadAd();
     }
 }

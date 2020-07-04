@@ -5,7 +5,7 @@ extern "C" JNIEXPORT jstring JNICALL
 Java_com_mgngoelay_examresult_Constants_getBanner(
         JNIEnv* env,
         jobject /* this */) {
-    std::string key = "ca-app-pub-2780984156359274/1017836267";
+    std::string key = "890171551475022_890172791474898";
     return env->NewStringUTF(key.c_str());
 }
 
@@ -13,6 +13,6 @@ extern "C" JNIEXPORT jstring JNICALL
 Java_com_mgngoelay_examresult_Constants_getInterstitial(
         JNIEnv* env,
         jobject /* this */) {
-    std::string key = "ca-app-pub-2780984156359274/8681059082";
+    std::string key = "890171551475022_890174918141352";
     return env->NewStringUTF(key.c_str());
 }
